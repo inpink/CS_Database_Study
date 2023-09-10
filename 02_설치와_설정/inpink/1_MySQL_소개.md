@@ -85,7 +85,7 @@ wsl --install
 
 > mysql을 windows에서 안쓰고 linux를 굳이 깔아 쓰는 이유?
 
-
+ㄹㅇ
 
 ![image](https://github.com/inpink/CS_Database_Study/assets/108166692/663f216e-8d8f-407d-9252-b53738e3fa01)
 
