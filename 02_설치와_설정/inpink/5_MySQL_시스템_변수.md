@@ -1,41 +1,75 @@
-
 ## MySQL 시스템 변수
 
-MySQL 서버는 설정 파일의 내용을 읽어 필요한 설정들을 한다.
-이 때, 필요한 값들을 **별도의 변수에 저장**해두는데, 이를 **시스템 변수(System Variables)** 라고 한다.
-
-시스템 변수들은 아래 명령어를 통해 확인할 수 있다.
+MySQL 서버는 설정 파일의 내용을 읽어 필요한 설정들을 한다.　   
+이 때, 필요한 값들을 **별도의 변수에 저장**해두는데, 이를 **시스템 변수(System Variables)** 라고 한다.　   
+　   
+시스템 변수들은 아래 명령어를 통해 확인할 수 있다.　   
 ~~~
 mysql > SHOW GLOBAL VARIABLES;
 또는
 mysql > SHOW VARIABLES;
 ~~~
-
+　   
+내가 원하는 변수 명만 검색하려면, 아래와 같이 Like 연산자를 이용하자. 　   
+![image](https://github.com/inpink/CS_Database_Study/assets/108166692/831d9637-0a49-41eb-a04b-a6f991a056bd)　   
+　   
+　   
 > 시스템 변수 중 'GLOBAL VARIABLES'과 'VARIABLES'의 차이는 무엇일까?
 
-우선 시스템 변수들의 목록이 담긴 documentataion를 보고오자.
-https://dev.mysql.com/doc/refman/8.0/en/server-system-variable-reference.html 　   
+우선 시스템 변수들의 목록이 담긴 documentataion를 보고오자.　   
+https://dev.mysql.com/doc/refman/8.0/en/server-system-variable-reference.html 　   　   
+　   
+위 docs 에 적혀있는 시스템 변수의 5가지 속성을 알아보자.　   
+- Cmd-Line : Yes면, MySQL 서버의 명령어를 통해 이 시스템 변수의 값을 변경하는 것이 가능하다.　   
+- Option file : 설정 파일(my.cnf)로 제어할 수 있는 변수인지의 여부이다.　   
+- System Var : 시스템 변수인지 유무이다. 당연히 위에선 다 Yes이다.　   
+  예전에는 변수명에 '-'를 쓰기도 하고 '_'를 쓰기도 했는데, MySQL 8.0버전부터 ' _ '를 구분자로 사용하도록 통일되었다.　   
+- Var Scope(변수 범위): 변수가 어떤 범위에서 설정될 수 있는지를 나타낸다. Global, Session(커넥션), Both가 있다.　   
+  자세한 내용은 아래에서 더 알아보자.　   
+- Dynamic :  런타임 중에 값을 변경할 수 있는지를 나타낸다. Dynamic과 Static이 있으며,　   
+  자세한 내용은 아래에서 더 알아보자.　   
+　   
+🌟시스템 변수는 크게 아래와 같이 분류할 수 있다. (Var Scope, Dynamic 옵션)　   
+![image](https://github.com/inpink/CS_Database_Study/assets/108166692/02c8df40-2bf8-45a1-9bb9-32a21703802a)　   
 
-위 docs 에 적혀있는 시스템 변수의 5가지 속성을 알아보자.
-- Cmd-Line : Yes면, MySQL 서버의 명령어를 통해 이 시스템 변수의 값을 변경하는 것이 가능하다
-- Option file : 설정 파일(my.cnf)로 제어할 수 있는 변수인지의 여부이다.
-- System Var : 시스템 변수인지 유무이다. 당연히 위에선 다 Yes이다.
-  예전에는 변수명에 '-'를 쓰기도 하고 '_'를 쓰기도 했는데,
-  MySQL 8.0버전부터 ' _ '를 구분자로 사용하도록 통일되었다.
-- Var Scope : 
 
-내가 원하는 변수 명만 검색하려면, 아래와 같이 Like 연산자를 이용하자. 
-![image](https://github.com/inpink/CS_Database_Study/assets/108166692/831d9637-0a49-41eb-a04b-a6f991a056bd)
+> MySQL 시스템 변수 Var Scope(변수 범위)
+
+변수가 어떤 범위에서 설정될 수 있는지를 나타낸다. Global, Session(커넥션), Both가 있다.
+
+- GLOBAL 범위
+  : 해당 변수는 MySQL 서버 전체에 영향을 미친다. 즉, 모든 세션 및 연결에 대한 공통 설정이다.
+  MySQL 서버가 시작될 때 설정되며, **SET GLOBAL** 명령을 사용하여 런타임 중에 변경할 수 있다.
+  my.cnf 또는 my.ini와 같은 MySQL 설정 파일에 설정을 지정할 수 있다.
+  예) InnoDB 버퍼 풀 크기(innodb_buffer_pool_size)
+
+- SESSION 범위
+  : 하나의 MySQL 서버에는 여러 클라이언트가 접속할 수 있는데, 해당 변수는 각 MySQL 세션(커넥션, 클라이언트)마다 다르게 설정하여 각 세션에만 영향을 준다. 즉, 해당 세션에서만 사용 가능한 설정이다.
+  세션이 시작될 때 설정되며, 세션이 종료될 때까지 유지된다. **SET** 명령을 사용하여 현재 세션 내에서 값을 변경할 수 있다.
+  **커넥션별로 설정값을 서로 다르게 지정할 수 있으며, 한번 연결된 커넥션의 세션 변수는 서버에서 강제로 변경할 수 없다. MySQL 서버 설정 파일에 초기값을 명시할 수 없다는 것이다.** 
+  예) innodb_parallel_read_threads
+
+- BOTH 범위
+  : 설정된 변수는 GLOBAL과 SESSION 두 범위에 모두 영향을 미친다.
+  MySQL 서버의 전역 설정 값과 현재 세션의 설정 값 모두를 나타낸다.
+  SET GLOBAL로 전역 설정 값을 변경하면 모든 세션에 적용되고, SET으로는 현재 세션의 설정 값을 변경할 수 있다.
+  MySQL 서버 설정 파일에 초기값을 명시할 수 있다.
+  위의 Global, Session과 차이점을 더욱 구분하자면, MySQL 서버의 설정 파일에 초기값을 명시해두고, 커넥션이 만들어지는 순간부터 **해당 커넥션에서만 유효한 설정 변수의 값을 할당해준다.**
+
+
+
+> MySQL 시스템 변수 Dynamic
+
+서버가 기동 중인 상태에서 변수 값을 변경 가능한지 여부에 따라
+가능하면 동적 변수(Dynamic), 불가능하면 정적 변수(Static)이다.
+
 
 
 44p set persist 관련  조회
 performance_schema.varaibles_info  : performance_schema.variables_info 테이블은 이러한 시스템 변수의 메타데이터를 포함하고 있으며, 이를 통해 각 시스템 변수의 이름, 데이터 형식, 설명 등을 조회할 수 있습니다.
 
 
-show variables like "%version%";
-=> version과 관련된 "시스템 변수" 모두 출력
-
-
+> 데이터베이스 vs 테이블
 
 10. 데이터베이스 생성
 CREATE DATABASE TESTDB;
