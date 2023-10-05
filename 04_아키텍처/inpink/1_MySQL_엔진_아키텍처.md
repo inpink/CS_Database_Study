@@ -17,6 +17,7 @@ MySQL은 C API, JDBC, .NET 등의 표준 드라이버를 제공한다. 　
 > MySQL 서버
 
 "MySQL 서버"는 크게 ⓐ MySQL 엔진,  ⓑ 스토리지 엔진 2가지로 나누어진다.　   
+
 　   
 ⓐ MySQL 엔진 　   
   - 커넥션 핸들러 : 클라이언트와 소통　   
@@ -38,7 +39,6 @@ mysql> CREATE TABLE test (i INT) ENGINE = EXAMPLE;
 => 이렇게 생성한 test table은 EXAMPLE storage engine이 데이터를 읽고, 쓰고, 수정하는 작업(INSERT, UPDATE, DELETE, SELECT 등)을 담당한다.　   
 EXAMPLE storage engine은 스토리지 엔진의 핸들러 API를 구현하여 내가 등록해준 스토리지 엔진이다.　   
 　   
- 
+　   
 
-MySQL 서버에서 기본으로 제공되는 InnoDB 스토리지 엔진, MyISAM 스토리지 엔진을 구분
 
