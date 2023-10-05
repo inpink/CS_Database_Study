@@ -2,38 +2,38 @@
 ![structer](./image/struc.PNG)
 
 ##Connection Pool Layer
- Connection Pool은 MySQL Architecutre의 최상위 계층으로 Client의 Connection을 생성 및 관리하며 요청 Query를 처리합니다.
+ Connection Pool은 MySQL Architecutre의 최상위 계층으로 Client의 Connection을 생성 및 관리하며 요청 Query를 처리
 
  연결 처리
-  MySQL Server는 Client의 Connection 요청에 대해 Thread를 할당합니다. Client는 할당받은 Thread에서 Query를 수행합니다.
-  (Thread는 Server에 의해 캐시 되므로 새로운 Connection에 대하여 항상 생성할 필요는 없습니다.)
+  MySQL Server는 Client의 Connection 요청에 대해 Thread를 할당합니다. Client는 할당받은 Thread에서 Query를 수행
+  (Thread는 Server에 의해 캐시 되므로 새로운 Connection에 대하여 항상 생성할 필요는 없음)
  인증
-  MySQL Server는 Client가 연결될 때마다 Client의 호스트, 사용자 이름, 패스워드 등을 기반으로 인증을 수행합니다.
+  MySQL Server는 Client가 연결될 때마다 Client의 호스트, 사용자 이름, 패스워드 등을 기반으로 인증을 수행
  보안
-  MySQL Server에 Client가 성공적으로 연결되면 Server는 해당 Client가 특정 Query를 수행할 권한이 있는지 확인합니다.
+  MySQL Server에 Client가 성공적으로 연결되면 Server는 해당 Client가 특정 Query를 수행할 권한이 있는지 확인
  
 ##SQL Interface
- MySQL은 Command를 수신하고 Client에게 결과를 전송하는 Interface로 ANSI SQL 표준을 준수하며, 대부분의 ANSI 호환 Database Server의 SQL을 Interface로 사용합니다.
- SQL Interface 구성요소는 DML, DDL, Stored Procedures, Views, Triggers 등이 있습니다.
+ MySQL은 Command를 수신하고 Client에게 결과를 전송하는 Interface로 ANSI SQL 표준을 준수하며, 대부분의 ANSI 호환 Database Server의 SQL을 Interface로 사용
+ SQL Interface 구성요소는 DML, DDL, Stored Procedures, Views, Triggers 등이 있음
 
 ##Parser
- 사용자 요청 Query를 토큰(MySQL이 인식할 수 있는 최소 단위의 어휘나 기호)으로 분리, Tree 형태의 구조로 만들어 내는 작업을 의미합니다. 이 과정에서 Query의 문법 오류 발견 시 사용자에게 오류 메시지를 전달합니다.
+ 사용자 요청 Query를 토큰(MySQL이 인식할 수 있는 최소 단위의 어휘나 기호)으로 분리, Tree 형태의 구조로 만들어 내는 작업을 의미, 이 과정에서 Query의 문법 오류 발견 시 사용자에게 오류 메시지를 전달
 
 ##Optimizer
- 사용자의 요청 Query를 얼마나 낮은 비용으로 효율적으로 처리할지를 결정하는 역할을 수행합니다. Query 재작성, 스캔 순서 조정 및 인덱스의 선택과 같은 작업을 수행합니다.
+ 사용자의 요청 Query를 얼마나 낮은 비용으로 효율적으로 처리할지를 결정하는 역할을 수행. Query 재작성, 스캔 순서 조정 및 인덱스의 선택과 같은 작업을 수행
 
 ##Cache & Buffers
- Data 및 인덱스에 대해 빠르게 Read/Write 하기 위한 목적으로 사용되는 메모리 공간입니다. MyISAM의 Key Cache나 InnoDB의 Buffer Pool과 같은 보조 저장소를 이야기합니다.
+ Data 및 인덱스에 대해 빠르게 Read/Write 하기 위한 목적으로 사용되는 메모리 공간. (MyISAM의 Key Cache나 InnoDB의 Buffer Pool과 같은 보조 저장소)
 
 # Thread 구조
 
 ##Foreground Thread(Client Thread)
- Foreground Thread의 수는 최소 MySQL Server에 접속한 Client 수만큼 존재하며, 각 Client 사용자가 요청한 Query를 처리합니다.
- 사용자가 작업을 마치고 Session이 종료되면 해당 Thread는 Thread Cache로 반환됩니다. 이때 Thread Cache에 일정 개수 이상의 대기 중인 Thread가 있다면 해당 Thread를 종료시켜 일정 개수의 Thread만 Thread Cache에 유지합니다.
- Thread Cache에 유지할 수 있는 최대 Thread 개수는 thread_cache_size라는 System Variable로 설정합니다.
- 일반적인 Foreground Thread는 사용자 요청(Query)을 받아 필요한 Data를 가져오는 역할을 수행하는데, 사용 중인 스토리지 엔진에 따라 역할 및 수행 범위가 달라질 수 있습니다.
- 예를 들어, MyISAM 테이블의 경우 디스크 I/O관련 작업은 모두 Foreground Thread가 담당하지만, InnoDB 테이블은 메모리에 대한 Read/Write 작업만을 Foreground Thread가 담당합니다.
- (이외의 작업은 Background Thread가 담당합니다.)
+ Foreground Thread의 수는 최소 MySQL Server에 접속한 Client 수만큼 존재하며, 각 Client 사용자가 요청한 Query를 처리
+ 사용자가 작업을 마치고 Session이 종료되면 해당 Thread는 Thread Cache로 반환됩니다. 이때 Thread Cache에 일정 개수 이상의 대기 중인 Thread가 있다면 해당 Thread를 종료시켜 일정 개수의 Thread만 Thread Cache에 유지
+ Thread Cache에 유지할 수 있는 최대 Thread 개수는 thread_cache_size라는 System Variable로 설정
+ 일반적인 Foreground Thread는 사용자 요청(Query)을 받아 필요한 Data를 가져오는 역할을 수행하는데, 사용 중인 스토리지 엔진에 따라 역할 및 수행 범위가 달라질 수 있음
+ 예를 들어, MyISAM 테이블의 경우 디스크 I/O관련 작업은 모두 Foreground Thread가 담당하지만, InnoDB 테이블은 메모리에 대한 Read/Write 작업만을 Foreground Thread가 담당
+ (이외의 작업은 Background Thread가 담당)
 
 ##Background Thread
  다양한 MySQL의 스토리지 엔진 중 InnoDB의 경우 많은 작업을 Background Thread가 수행
@@ -42,12 +42,12 @@
  예를 들어, Buffer Pool에 있는 Dirty Page를 Flush 하는 일은 Page Cleaner Thread가 수행하며 있으며, Delete Query에 의해서 삭제 처리된 Row를 물리적으로 삭제하는 일은 Purge Thread가 수행.
 
 InnoDB 엔진의 주요 Background Thread
-Master Thread	-  Background Thread의 관리 및 다양한 작업들의 스케줄링을 담당합니다.
-                 Data 일관성을 보장하기 위해 Buffer Pool의 Data를 디스크로 비동기식으로 Flush합니다.
-Insert Buffer -	Insert Buffer(Change Buffer)를 Merge합니다.
-Log Thread	-	트랜잭션 로그(Redo Log)를 작성합니다.
-Read Thread	-	다양한 유형의 Read 요청 처리합니다.
-Write Thread	-	다양한 유형의 Write 요청 처리합니다.
-Page Cleaner - Pool의 Dirty Page를 디스크로 Flush합니다.
-Purge Thread	-	Rollback에 더이상 필요하지 않은 Row를 제거하는 작업을 담당합니다.
+Master Thread	-  Background Thread의 관리 및 다양한 작업들의 스케줄링을 담당
+                 Data 일관성을 보장하기 위해 Buffer Pool의 Data를 디스크로 비동기식으로 Flush
+Insert Buffer -	Insert Buffer(Change Buffer)를 Merge
+Log Thread	-	트랜잭션 로그(Redo Log)를 작성
+Read Thread	-	다양한 유형의 Read 요청 처리
+Write Thread	-	다양한 유형의 Write 요청 처리
+Page Cleaner - Pool의 Dirty Page를 디스크로 Flush
+Purge Thread	-	Rollback에 더이상 필요하지 않은 Row를 제거하는 작업을 담당
  
