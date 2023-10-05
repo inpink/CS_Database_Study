@@ -50,4 +50,21 @@ Read Thread	-	다양한 유형의 Read 요청 처리
 Write Thread	-	다양한 유형의 Write 요청 처리
 Page Cleaner - Pool의 Dirty Page를 디스크로 Flush
 Purge Thread	-	Rollback에 더이상 필요하지 않은 Row를 제거하는 작업을 담당
- 
+
+# 메모리 구조
+
+##Global Memory
+-InnoDB : Buffer Pool
+ InnoDB 스토리지 엔진의 가장 큰 메모리 영역인 Buffer Pool에는 Data, 인덱스, Lock, Data Dictionary 및 기타 정보를 저장. (Oracle의 Buffer Cache 영역과 유사)
+ 주로 자주 사용되는 Data를 메모리 영역에 캐싱해서 빠르게 접근하기 위한 용도로 사용
+
+-InnoDB : Change Buffer(구 버전 - Insert Buffer)
+Insert, Update, Delete와 같은 Data 변경 작업 시 사용되는 메모리 영역
+Data 변경 작업 시 인덱스에도 변경 내역이 반영되어야 하는데, 관련 인덱스가 많다면 자원 소모가 커질 수 있습니다. 이러한 이유로 인덱스에 대한 작업 성능 향상을 목적으로 하는 메모리 공간이 바로 Change Buffer
+MySQL 5.5 이전에는 Insert 작업에 대한 변경내역만을 기록하였기 때문에 Insert Buffer라고도 함.
+
+-InnoDB : Adaptive Hash Index
+B-Tree Index의 약점을 보완하기 위한 InnoDB의 기능으로, 자주 사용되는 컬럼을 해시로 정의하여 바로 Data에 접근이 가능하게 하는 기능
+이때, 모든 값이 아닌 자주 사용되는 Data 값만 해시 값으로 생성. (Adaptive Hash Index 영역에 할당되며 전체 Innodb Buffer Pool의 1/64 만큼으로 초기화됨)
+
+
