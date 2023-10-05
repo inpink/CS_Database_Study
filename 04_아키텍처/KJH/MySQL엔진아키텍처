@@ -24,6 +24,8 @@
 ##Cache & Buffers
  Data 및 인덱스에 대해 빠르게 Read/Write 하기 위한 목적으로 사용되는 메모리 공간입니다. MyISAM의 Key Cache나 InnoDB의 Buffer Pool과 같은 보조 저장소를 이야기합니다.
 
+# Thread 구조
+
 ##Foreground Thread(Client Thread)
  Foreground Thread의 수는 최소 MySQL Server에 접속한 Client 수만큼 존재하며, 각 Client 사용자가 요청한 Query를 처리합니다.
  사용자가 작업을 마치고 Session이 종료되면 해당 Thread는 Thread Cache로 반환됩니다. 이때 Thread Cache에 일정 개수 이상의 대기 중인 Thread가 있다면 해당 Thread를 종료시켜 일정 개수의 Thread만 Thread Cache에 유지합니다.
