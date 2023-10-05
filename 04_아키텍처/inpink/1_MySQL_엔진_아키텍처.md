@@ -39,6 +39,9 @@ mysql> CREATE TABLE test (i INT) ENGINE = EXAMPLE;
 => 이렇게 생성한 test table은 EXAMPLE storage engine이 데이터를 읽고, 쓰고, 수정하는 작업(INSERT, UPDATE, DELETE, SELECT 등)을 담당한다.　   
 EXAMPLE storage engine은 스토리지 엔진의 핸들러 API를 구현하여 내가 등록해준 스토리지 엔진이다.　   
 　   
+
+　   　   
+![image](https://github.com/inpink/CS_Database_Study/assets/108166692/b040a90b-849d-483d-bc25-46d1a9b50404)　   
+=> MySQL 서버에서 제공하는 스토리지 엔진 목록을 확인한다.　   
+Support값이 NO인 경우는, 현재 서버에 포함되지 않았기에 다시 빌드해줘야 한다는 뜻이다.　   
 　   
-
-
