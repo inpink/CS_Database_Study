@@ -2,7 +2,7 @@
 ![structer](./image/struc.PNG)
 
 ##Connection Pool Layer
-Connection Pool은 MySQL Architecutre의 최상위 계층으로 Client의 Connection을 생성 및 관리하며 요청 Query를 처리
+ Connection Pool은 MySQL Architecutre의 최상위 계층으로 Client의 Connection을 생성 및 관리하며 요청 Query를 처리
 
  연결 처리
   MySQL Server는 Client의 Connection 요청에 대해 Thread를 할당합니다. Client는 할당받은 Thread에서 Query를 수행
@@ -13,8 +13,8 @@ Connection Pool은 MySQL Architecutre의 최상위 계층으로 Client의 Connec
   MySQL Server에 Client가 성공적으로 연결되면 Server는 해당 Client가 특정 Query를 수행할 권한이 있는지 확인
  
 ##SQL Interface
-MySQL은 Command를 수신하고 Client에게 결과를 전송하는 Interface로 ANSI SQL 표준을 준수하며, 대부분의 ANSI 호환 Database Server의 SQL을 Interface로 사용
-SQL Interface 구성요소는 DML, DDL, Stored Procedures, Views, Triggers 등이 있음
+ MySQL은 Command를 수신하고 Client에게 결과를 전송하는 Interface로 ANSI SQL 표준을 준수하며, 대부분의 ANSI 호환 Database Server의 SQL을 Interface로 사용
+ SQL Interface 구성요소는 DML, DDL, Stored Procedures, Views, Triggers 등이 있음
 
 ##Parser
  사용자 요청 Query를 토큰(MySQL이 인식할 수 있는 최소 단위의 어휘나 기호)으로 분리, Tree 형태의 구조로 만들어 내는 작업을 의미, 이 과정에서 Query의 문법 오류 발견 시 사용자에게 오류 메시지를 전달
@@ -28,7 +28,7 @@ SQL Interface 구성요소는 DML, DDL, Stored Procedures, Views, Triggers 등�
 # Thread 구조
 
 ##Foreground Thread(Client Thread)
- Foreground Thread의 수는 최소 MySQL Server에 접속한 Client 수만큼 존재하며, 각 Client 사용자가 요청한 Query를 처리
+  Foreground Thread의 수는 최소 MySQL Server에 접속한 Client 수만큼 존재하며, 각 Client 사용자가 요청한 Query를 처리
  사용자가 작업을 마치고 Session이 종료되면 해당 Thread는 Thread Cache로 반환됩니다. 이때 Thread Cache에 일정 개수 이상의 대기 중인 Thread가 있다면 해당 Thread를 종료시켜 일정 개수의 Thread만 Thread Cache에 유지
  Thread Cache에 유지할 수 있는 최대 Thread 개수는 thread_cache_size라는 System Variable로 설정
  일반적인 Foreground Thread는 사용자 요청(Query)을 받아 필요한 Data를 가져오는 역할을 수행하는데, 사용 중인 스토리지 엔진에 따라 역할 및 수행 범위가 달라질 수 있음
@@ -36,7 +36,7 @@ SQL Interface 구성요소는 DML, DDL, Stored Procedures, Views, Triggers 등�
  (이외의 작업은 Background Thread가 담당)
 
 ##Background Thread
- 다양한 MySQL의 스토리지 엔진 중 InnoDB의 경우 많은 작업을 Background Thread가 수행
+  다양한 MySQL의 스토리지 엔진 중 InnoDB의 경우 많은 작업을 Background Thread가 수행
  Data 읽기 작업의 경우, 주로 Foreground Thread가 처리하기 때문에 Read Thread를 많이 설정할 필요는 없지만, 쓰기 작업의 경우 대부분의 작업을 Background Thread가 담당하므로 충분한 수의 Write Thread를 설정하는 것이 좋음
  과거 버전에서는 Master Thread가 여러 가지 역할을 수행했기 때문에 동시성이 떨어졌지만, 지금은 각각의 작업들이 역할별로 분리되어 각기 다른 Thread들이 담당. 
  예를 들어, Buffer Pool에 있는 Dirty Page를 Flush 하는 일은 Page Cleaner Thread가 수행하며 있으며, Delete Query에 의해서 삭제 처리된 Row를 물리적으로 삭제하는 일은 Purge Thread가 수행.
@@ -54,7 +54,7 @@ Purge Thread	-	Rollback에 더이상 필요하지 않은 Row를 제거하는 작
 # 메모리 구조
 
 ##Global Memory
--InnoDB : Buffer Pool
+ -InnoDB : Buffer Pool
  InnoDB 스토리지 엔진의 가장 큰 메모리 영역인 Buffer Pool에는 Data, 인덱스, Lock, Data Dictionary 및 기타 정보를 저장. (Oracle의 Buffer Cache 영역과 유사)
  주로 자주 사용되는 Data를 메모리 영역에 캐싱해서 빠르게 접근하기 위한 용도로 사용
 
@@ -90,7 +90,7 @@ MySQL은 다중 Thread로 동작하므로 동일 테이블에 대해 동시에 Q
 (동일 테이블에 접근하는 Thread가 많을수록 더 많은 테이블이 오픈되어야 하므로 추가 메모리를 사용)
 
 ##Local Memory
--Sort Buffer
+ -Sort Buffer
 -Join Buffer
 -Read Buffer
 일반적으로 MyISAM 테이블에 대한 Sequential Scan(Full Table)을 수행해야 할 때, 각 테이블에 대해 Read Buffer를 할당.
