@@ -2,6 +2,7 @@
 ![structer](./image/struc.PNG)
 
 ##Connection Pool Layer
+
  Connection Pool은 MySQL Architecutre의 최상위 계층으로 Client의 Connection을 생성 및 관리하며 요청 Query를 처리
 
  연결 처리
